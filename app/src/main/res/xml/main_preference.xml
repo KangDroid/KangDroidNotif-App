@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="Server-Related Management">
+
+        <Preference
+            android:key="server_status"
+            android:selectable="true"
+            android:title="Server Status: " />
+    </PreferenceCategory>
+</PreferenceScreen>
