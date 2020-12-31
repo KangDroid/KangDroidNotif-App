@@ -16,8 +16,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.HashMap
 
-class KangDroidNotificationListener: NotificationListenerService() {
-    val TAG_VAL:String = "RELKangDroidNotificationListener"
+class KangDroidNotificationListener : NotificationListenerService() {
+    val TAG_VAL: String = "RELKangDroidNotificationListener"
 
     override fun onNotificationRemoved(sbn: StatusBarNotification?) {
         super.onNotificationRemoved(sbn)
@@ -29,23 +29,23 @@ class KangDroidNotificationListener: NotificationListenerService() {
             return
         }
 
-        Log.d(TAG_VAL, "Total Debug: ${sbn.toString()}")
-        Log.d(TAG_VAL, "Package Name: ${sbn?.packageName}")
+        Log.d(TAG_VAL, "Total Debug: $sbn")
+        Log.d(TAG_VAL, "Package Name: ${sbn.packageName}")
         Log.d(
             TAG_VAL,
-            "Notification Title: ${sbn?.notification?.extras?.getString("android.title")}"
+            "Notification Title: ${sbn.notification?.extras?.getString("android.title")}"
         )
-        Log.d(TAG_VAL, "Notification Text: ${sbn?.notification?.extras?.getString("android.text")}")
+        Log.d(TAG_VAL, "Notification Text: ${sbn.notification?.extras?.getString("android.text")}")
 
         // Call post
         call_post_retro(
-            "${sbn?.packageName}",
-            "${sbn?.notification?.extras?.getString("android.title")}"
+            "${sbn.packageName}",
+            "${sbn.notification?.extras?.getString("android.title")}"
         )
     }
 
     fun getCurDateInFormat(): String {
-        val todayDate: Date = Calendar.getInstance().getTime()
+        val todayDate: Date = Calendar.getInstance().time
         val formatDate: DateFormat = SimpleDateFormat("yyyy-mm-dd hh:mm:ss")
         return formatDate.format(todayDate)
     }
@@ -61,7 +61,7 @@ class KangDroidNotificationListener: NotificationListenerService() {
             Log.e(TAG_VAL, "Title and Content are NULL. Skipping posting.")
             return
         }
-        val BASE_URL: String = "http://192.168.0.46:8080/";
+        val BASE_URL: String = "http://192.168.0.46:8080/"
         val retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())

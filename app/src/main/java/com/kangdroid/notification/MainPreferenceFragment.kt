@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.util.Log
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import com.google.gson.Gson
 import com.kangdroid.notification.server.CallAPI
 import retrofit2.Call
 import retrofit2.Callback
@@ -29,14 +28,14 @@ class MainPreferenceFragment : PreferenceFragmentCompat() {
      * GET Method
      */
     fun check_server_alive() {
-        val BASE_URL:String = "http://192.168.0.46:8080/get/NotifCount/"
+        val BASE_URL: String = "http://192.168.0.46:8080/get/NotifCount/"
         val retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         val api = retrofit.create(CallAPI::class.java)
         val getValueTmp = api.getNotificationCount()
-        getValueTmp.enqueue(object: Callback<String> {
+        getValueTmp.enqueue(object : Callback<String> {
             override fun onResponse(call: Call<String>, response: Response<String>) {
                 if (response.isSuccessful) {
                     Log.d(TAG_VAL, "Successful Response!")
