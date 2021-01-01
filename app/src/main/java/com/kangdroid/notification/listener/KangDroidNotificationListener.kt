@@ -38,10 +38,7 @@ class KangDroidNotificationListener : NotificationListenerService() {
         Log.d(TAG_VAL, "Notification Text: ${sbn.notification?.extras?.getString("android.text")}")
 
         // Call post
-        call_post_retro(
-            "${sbn.packageName}",
-            "${sbn.notification?.extras?.getString("android.title")}"
-        )
+        call_post_retro("${sbn.notification?.extras?.getString("android.title")}", "${sbn.notification?.extras?.getString("android.text")}", sbn.packageName)
     }
 
     fun getCurDateInFormat(): String {
@@ -53,12 +50,13 @@ class KangDroidNotificationListener : NotificationListenerService() {
     /**
      * POST Method
      */
-    fun call_post_retro(title: String?, content: String?) {
+    fun call_post_retro(title: String?, content: String?, reqPackage: String?) {
         /**
          * TODO: Prompt to user
+         * TODO: Also give more debugging information.
          */
-        if (title == null || content == null) {
-            Log.e(TAG_VAL, "Title and Content are NULL. Skipping posting.")
+        if (title == null || content == null || reqPackage == null) {
+            Log.e(TAG_VAL, "Either of title/content/reqPackage is NULL. Skipping posting.")
             return
         }
         val BASE_URL: String = "http://192.168.0.46:8080/"
@@ -70,6 +68,7 @@ class KangDroidNotificationListener : NotificationListenerService() {
 
         var inputParam: HashMap<String, Any> = HashMap()
         with(inputParam) {
+            put("reqPackage", reqPackage)
             put("title", title)
             put("content", content)
             put("genDate", getCurDateInFormat())
