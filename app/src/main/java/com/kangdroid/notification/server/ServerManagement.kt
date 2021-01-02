@@ -13,11 +13,8 @@ class ServerManagement {
     private val TAG_SERVER = "ServerManagement"
     private val mServerBaseUrl : String = "http://192.168.0.46"
     private val mServerPort: String = "8080"
-    var mServerStatus: Boolean = false
-
-    init {
-        // Check for server availability
-        checkServerAlive(null, null)
+    companion object {
+        var mServerStatus: Boolean = false
     }
 
     fun checkServerAlive(mUpdateCallback: ((Any, Boolean) -> Unit)?, mArgs: Any?) {
@@ -59,7 +56,7 @@ class ServerManagement {
      * POST Method
      */
     fun call_post_retro(title: String?, content: String?, reqPackage: String?) {
-        if (!this.mServerStatus) {
+        if (!mServerStatus) {
             Log.e(TAG_SERVER, "Server is NOT running")
             return
         }
