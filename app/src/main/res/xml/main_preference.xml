@@ -13,5 +13,9 @@
             android:defaultValue="false"
             android:key="disable_charging_state"
             android:title="Disable Charging State" />
+        <Preference
+            android:key="blacklist_notification"
+            android:title="Add Notification Blacklist"
+            android:fragment="com.kangdroid.notification.BlackList"/>
     </PreferenceCategory>
 </PreferenceScreen>

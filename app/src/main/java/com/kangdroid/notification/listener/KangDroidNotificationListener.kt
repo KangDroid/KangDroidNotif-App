@@ -32,6 +32,13 @@ class KangDroidNotificationListener : NotificationListenerService() {
             return
         }
 
+        Log.d(TAG_VAL, "Hash Key: ${sbn.packageName}, Containing: ${Settings.Companion.mHashBlackList.containsKey(sbn.packageName)}")
+        if (Settings.Companion.mHashBlackList.containsKey(sbn.packageName)) {
+            if (Settings.Companion.mHashBlackList[sbn.packageName]!!) {
+                return
+            }
+        }
+
         // Disable Charging notification if set.
         if (Settings.Companion.mDisableChargingNotification) {
             if (sbn.tag == "charging_state") {
