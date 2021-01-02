@@ -7,6 +7,7 @@ import android.util.Log
 import com.kangdroid.notification.dto.NotificationData
 import com.kangdroid.notification.server.CallAPI
 import com.kangdroid.notification.server.ServerManagement
+import com.kangdroid.notification.settings.Settings
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -29,6 +30,13 @@ class KangDroidNotificationListener : NotificationListenerService() {
     override fun onNotificationPosted(sbn: StatusBarNotification?) {
         if (sbn?.notification?.flags?.and(Notification.FLAG_GROUP_SUMMARY) !== 0) {
             return
+        }
+
+        // Disable Charging notification if set.
+        if (Settings.Companion.mDisableChargingNotification) {
+            if (sbn.tag == "charging_state") {
+                return
+            }
         }
 
         Log.d(TAG_VAL, "Total Debug: $sbn")

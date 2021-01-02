@@ -7,4 +7,11 @@
             android:selectable="true"
             android:title="Server Status: " />
     </PreferenceCategory>
+    <PreferenceCategory android:title="Notification Management">
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="disable_charging_state"
+            android:title="Disable Charging State" />
+    </PreferenceCategory>
 </PreferenceScreen>
