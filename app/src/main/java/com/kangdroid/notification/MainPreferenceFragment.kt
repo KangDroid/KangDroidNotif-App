@@ -15,6 +15,7 @@ class MainPreferenceFragment : PreferenceFragmentCompat() {
     private var mServerStatus: Preference? = null
     private val mServerManagement: ServerManagement = ServerManagement()
     private var mDisableCharging: SwitchPreference? = null
+    private var mCheckServerManual: Preference? = null
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.main_preference, rootKey)
@@ -48,5 +49,14 @@ class MainPreferenceFragment : PreferenceFragmentCompat() {
         mDisableCharging = findPreference("disable_charging_state") as SwitchPreference?
         Settings.Companion.mDisableChargingNotification = mSharedPreference.getBoolean("disable_charging_state", false)
         mDisableCharging?.setOnPreferenceChangeListener(mPreferenceChangeListener)
+
+        // Manual Server Refresh
+        mCheckServerManual = findPreference("server_reload") as Preference?
+        mCheckServerManual?.setOnPreferenceClickListener {
+            if (it.key == "server_reload") {
+                mServerManagement.checkServerAlive(mUpdateServerStatus, mServerStatus)
+            }
+            true
+        }
     }
 }

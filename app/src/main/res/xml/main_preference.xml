@@ -10,6 +10,13 @@
             android:selectable="true"
             android:title="Server Status: "
             app:iconSpaceReserved="false"/>
+
+        <Preference
+            android:key="server_reload"
+            android:selectable="true"
+            android:title="Check for server availability manually"
+            app:iconSpaceReserved="false" />
+
     </PreferenceCategory>
     <PreferenceCategory android:title="Notification Management"
         app:iconSpaceReserved="false">
