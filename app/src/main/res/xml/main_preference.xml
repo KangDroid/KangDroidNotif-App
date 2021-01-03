@@ -5,6 +5,22 @@
     <PreferenceCategory android:title="Server-Related Management"
         app:iconSpaceReserved="false">
 
+        <EditTextPreference
+            android:defaultValue="Enter Server URL[Without Port]"
+            android:key="enter_server_url"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Set Server URL"
+            app:iconSpaceReserved="false"/>
+
+        <EditTextPreference
+            android:defaultValue="Enter Server port"
+            android:key="enter_server_port"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Set Server Port"
+            app:iconSpaceReserved="false"/>
+
         <Preference
             android:key="server_status"
             android:selectable="true"
