@@ -9,12 +9,22 @@ import com.kangdroid.notification.settings.Settings
 import java.lang.IllegalArgumentException
 
 class MainPreferenceFragment : PreferenceFragmentCompat(),  Preference.OnPreferenceChangeListener {
+    // UI Constants
+    private val KEY_SERVER_STATUS: String = "server_status"
+    private val KEY_DISABLE_CHARGING: String = "disable_charging_state"
+    private val KEY_SERVER_RELOAD: String = "server_reload"
+    private val KEY_SERVER_URLEDIT: String = "enter_server_url"
+    private val KEY_SERVER_PORTEDIT: String = "enter_server_port"
+
+    // UI Variable
     private var mServerStatus: Preference? = null
-    private val mServerManagement: ServerManagement = ServerManagement()
     private var mDisableCharging: SwitchPreference? = null
     private var mCheckServerManual: Preference? = null
     private var mServerURLEditor: EditTextPreference? = null
     private var mServerPortEditor: EditTextPreference? = null
+
+    // Server - Related Variable
+    private val mServerManagement: ServerManagement = ServerManagement()
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.main_preference, rootKey)
@@ -27,43 +37,43 @@ class MainPreferenceFragment : PreferenceFragmentCompat(),  Preference.OnPrefere
 
 
         // Preference
-        mServerStatus = findPreference("server_status") as Preference?
+        mServerStatus = findPreference(KEY_SERVER_STATUS) as Preference?
         mServerStatus?.title = "Server Status: OFF"
         mServerManagement.checkServerAlive()
 
         // Charging-Disable SwitchPreference
-        mDisableCharging = findPreference("disable_charging_state") as SwitchPreference?
-        Settings.mDisableChargingNotification = mSharedPreference.getBoolean("disable_charging_state", false)
+        mDisableCharging = findPreference(KEY_DISABLE_CHARGING) as SwitchPreference?
+        Settings.mDisableChargingNotification = mSharedPreference.getBoolean(KEY_DISABLE_CHARGING, false)
         mDisableCharging?.onPreferenceChangeListener = this
 
         // Manual Server Refresh
-        mCheckServerManual = findPreference("server_reload") as Preference?
+        mCheckServerManual = findPreference(KEY_SERVER_RELOAD) as Preference?
         mCheckServerManual?.setOnPreferenceClickListener {
-            if (it.key == "server_reload") {
+            if (it.key == KEY_SERVER_RELOAD) {
                 mServerManagement.checkServerAlive()
             }
             true
         }
 
         // Server URL
-        mServerURLEditor = findPreference("enter_server_url") as EditTextPreference?
+        mServerURLEditor = findPreference(KEY_SERVER_URLEDIT) as EditTextPreference?
         mServerURLEditor?.text = ServerManagement.mServerBaseUrl
         mServerURLEditor?.onPreferenceChangeListener = this
 
         // Server Port
-        mServerPortEditor = findPreference("enter_server_port") as EditTextPreference?
+        mServerPortEditor = findPreference(KEY_SERVER_PORTEDIT) as EditTextPreference?
         mServerPortEditor?.text = ServerManagement.mServerPort
         mServerPortEditor?.onPreferenceChangeListener = this
     }
 
     override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
-        if (preference?.key == "enter_server_url") {
+        if (preference?.key == KEY_SERVER_URLEDIT) {
             ServerManagement.mServerBaseUrl = newValue as String
             mServerManagement.checkServerAlive()
-        } else if (preference?.key == "enter_server_port") {
+        } else if (preference?.key == KEY_SERVER_PORTEDIT) {
             ServerManagement.mServerPort = newValue as String
             mServerManagement.checkServerAlive()
-        } else if (preference?.key == "disable_charging_state") {
+        } else if (preference?.key == KEY_DISABLE_CHARGING) {
             Settings.mDisableChargingNotification = newValue as Boolean
         }
         return true
