@@ -20,7 +20,7 @@ class ServerManagement {
         var mServerPort: String = "8080"
         var mMainUI: MainPreferenceFragment? = null
     }
-    fun checkServerAlive(mUpdateCallback: ((Any, Boolean) -> Unit)?, mArgs: Any?) {
+    fun checkServerAlive(mArgs: Int) {
         var mRetrofit: Retrofit
 
         try {
@@ -36,14 +36,9 @@ class ServerManagement {
 
             // Set Server status to OFFLINE
             mServerStatus = false
-            if (mUpdateCallback != null && mArgs != null) {
-                mUpdateCallback(mArgs, mServerStatus)
-            }
 
-            // Another Callback on Main Object
-            if (mArgs is Int) {
-                mMainUI?.updateServerStatusUI(mArgs as Int)
-            }
+            // Refresh Main UI
+            mMainUI?.updateServerStatusUI(mArgs)
             return
         }
 
@@ -59,9 +54,8 @@ class ServerManagement {
                     false
                 }
 
-                if (mUpdateCallback != null && mArgs != null) {
-                    mUpdateCallback(mArgs, mServerStatus)
-                }
+                // Refresh Main UI
+                mMainUI?.updateServerStatusUI(mArgs)
             }
 
             override fun onFailure(call: Call<String>, t: Throwable) {

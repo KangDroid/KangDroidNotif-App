@@ -16,7 +16,6 @@ class MainPreferenceFragment : PreferenceFragmentCompat(),  Preference.OnPrefere
     private var mCheckServerManual: Preference? = null
     private var mServerURLEditor: EditTextPreference? = null
     private var mServerPortEditor: EditTextPreference? = null
-    private lateinit var mUpdateServerStatus: (Any, Boolean) -> Unit
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.main_preference, rootKey)
@@ -31,17 +30,7 @@ class MainPreferenceFragment : PreferenceFragmentCompat(),  Preference.OnPrefere
         // Preference
         mServerStatus = findPreference("server_status") as Preference?
         mServerStatus?.title = "Server Status: OFF"
-
-        // Lambda function to update server status with "checkServerAlive()"
-        mUpdateServerStatus = {
-            mServerPane, mStatus ->
-            if (mStatus) {
-                (mServerPane as Preference).title = "Server Status: ON"
-            } else {
-                (mServerPane as Preference).title = "Server Status: OFF"
-            }
-        }
-        mServerManagement.checkServerAlive(mUpdateServerStatus, mServerStatus)
+        mServerManagement.checkServerAlive(2)
 
         // Charging-Disable SwitchPreference
         mDisableCharging = findPreference("disable_charging_state") as SwitchPreference?
@@ -52,7 +41,7 @@ class MainPreferenceFragment : PreferenceFragmentCompat(),  Preference.OnPrefere
         mCheckServerManual = findPreference("server_reload") as Preference?
         mCheckServerManual?.setOnPreferenceClickListener {
             if (it.key == "server_reload") {
-                mServerManagement.checkServerAlive(mUpdateServerStatus, mServerStatus)
+                mServerManagement.checkServerAlive(2)
             }
             true
         }
@@ -69,10 +58,10 @@ class MainPreferenceFragment : PreferenceFragmentCompat(),  Preference.OnPrefere
     override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
         if (preference?.key == "enter_server_url") {
             ServerManagement.mServerBaseUrl = newValue as String
-            mServerManagement.checkServerAlive(null, 0)
+            mServerManagement.checkServerAlive(0)
         } else if (preference?.key == "enter_server_port") {
             ServerManagement.mServerPort = newValue as String
-            mServerManagement.checkServerAlive(null, 1)
+            mServerManagement.checkServerAlive(1)
         } else if (preference?.key == "disable_charging_state") {
             Settings.Companion.mDisableChargingNotification = newValue as Boolean
         }
@@ -80,7 +69,10 @@ class MainPreferenceFragment : PreferenceFragmentCompat(),  Preference.OnPrefere
     }
 
     /**
-     * Mode: 0 for ServerURL Editor, 1 for ServerPORT Editor
+     * Mode:
+     * 0 for ServerURL Editor,
+     * 1 for ServerPORT Editor,
+     * 2 for Overall Server Status.
      */
     fun updateServerStatusUI(mode: Int) {
         when(mode) {
@@ -100,6 +92,15 @@ class MainPreferenceFragment : PreferenceFragmentCompat(),  Preference.OnPrefere
                 } else {
                     "Error"
                 }).toString()
+            }
+
+            // Overall Server Status
+            2 -> {
+                mServerStatus?.title = if (ServerManagement.mServerStatus) {
+                    "Server Status: ON"
+                } else {
+                    "Server Status: OFF"
+                }
             }
         }
     }
