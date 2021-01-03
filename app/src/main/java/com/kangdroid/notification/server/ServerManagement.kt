@@ -20,7 +20,7 @@ class ServerManagement {
         var mServerPort: String = "8080"
         var mMainUI: MainPreferenceFragment? = null
     }
-    fun checkServerAlive(mArgs: Int) {
+    fun checkServerAlive() {
         var mRetrofit: Retrofit
 
         try {
@@ -38,7 +38,7 @@ class ServerManagement {
             mServerStatus = false
 
             // Refresh Main UI
-            mMainUI?.updateServerStatusUI(mArgs)
+            mMainUI?.updateServerStatusUI()
             return
         }
 
@@ -55,7 +55,7 @@ class ServerManagement {
                 }
 
                 // Refresh Main UI
-                mMainUI?.updateServerStatusUI(mArgs)
+                mMainUI?.updateServerStatusUI()
             }
 
             override fun onFailure(call: Call<String>, t: Throwable) {

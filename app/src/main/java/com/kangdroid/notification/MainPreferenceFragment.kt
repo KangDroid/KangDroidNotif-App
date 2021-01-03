@@ -30,7 +30,7 @@ class MainPreferenceFragment : PreferenceFragmentCompat(),  Preference.OnPrefere
         // Preference
         mServerStatus = findPreference("server_status") as Preference?
         mServerStatus?.title = "Server Status: OFF"
-        mServerManagement.checkServerAlive(2)
+        mServerManagement.checkServerAlive()
 
         // Charging-Disable SwitchPreference
         mDisableCharging = findPreference("disable_charging_state") as SwitchPreference?
@@ -41,7 +41,7 @@ class MainPreferenceFragment : PreferenceFragmentCompat(),  Preference.OnPrefere
         mCheckServerManual = findPreference("server_reload") as Preference?
         mCheckServerManual?.setOnPreferenceClickListener {
             if (it.key == "server_reload") {
-                mServerManagement.checkServerAlive(2)
+                mServerManagement.checkServerAlive()
             }
             true
         }
@@ -58,50 +58,38 @@ class MainPreferenceFragment : PreferenceFragmentCompat(),  Preference.OnPrefere
     override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
         if (preference?.key == "enter_server_url") {
             ServerManagement.mServerBaseUrl = newValue as String
-            mServerManagement.checkServerAlive(0)
+            mServerManagement.checkServerAlive()
         } else if (preference?.key == "enter_server_port") {
             ServerManagement.mServerPort = newValue as String
-            mServerManagement.checkServerAlive(1)
+            mServerManagement.checkServerAlive()
         } else if (preference?.key == "disable_charging_state") {
             Settings.Companion.mDisableChargingNotification = newValue as Boolean
         }
         return true
     }
 
-    /**
-     * Mode:
-     * 0 for ServerURL Editor,
-     * 1 for ServerPORT Editor,
-     * 2 for Overall Server Status.
-     */
-    fun updateServerStatusUI(mode: Int) {
-        when(mode) {
-            // When ServerURL
-            0 -> {
-                mServerURLEditor?.summary = (if (ServerManagement.mServerStatus) {
-                    ServerManagement.mServerBaseUrl
-                } else {
-                    "Error"
-                }).toString()
-            }
+    fun updateServerStatusUI() {
+        val mErrorString: String = "Error connecting server."
 
-            // When ServerPORT
-            1 -> {
-                mServerPortEditor?.summary = (if (ServerManagement.mServerStatus) {
-                    ServerManagement.mServerPort
-                } else {
-                    "Error"
-                }).toString()
-            }
+        if (ServerManagement.mServerStatus) {
+            // Server URL Editor
+            mServerURLEditor?.summary = ServerManagement.mServerBaseUrl
 
-            // Overall Server Status
-            2 -> {
-                mServerStatus?.title = if (ServerManagement.mServerStatus) {
-                    "Server Status: ON"
-                } else {
-                    "Server Status: OFF"
-                }
-            }
+            // Server Port Editor
+            mServerPortEditor?.summary = ServerManagement.mServerPort
+
+            // Overall Server Connection State
+            mServerStatus?.title = "Server Status: ON"
+
+        } else {
+            // Server URL Editor
+            mServerURLEditor?.summary = mErrorString
+
+            // Server Port Editor
+            mServerPortEditor?.summary = mErrorString
+
+            // Overall Server Connection State
+            mServerStatus?.title = "Server Status: OFF"
         }
     }
 }
