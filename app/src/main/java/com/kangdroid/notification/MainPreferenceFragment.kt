@@ -9,7 +9,6 @@ import com.kangdroid.notification.settings.Settings
 import java.lang.IllegalArgumentException
 
 class MainPreferenceFragment : PreferenceFragmentCompat(),  Preference.OnPreferenceChangeListener {
-    private val TAG_VAL: String = "MainPreference"
     private var mServerStatus: Preference? = null
     private val mServerManagement: ServerManagement = ServerManagement()
     private var mDisableCharging: SwitchPreference? = null
@@ -34,8 +33,8 @@ class MainPreferenceFragment : PreferenceFragmentCompat(),  Preference.OnPrefere
 
         // Charging-Disable SwitchPreference
         mDisableCharging = findPreference("disable_charging_state") as SwitchPreference?
-        Settings.Companion.mDisableChargingNotification = mSharedPreference.getBoolean("disable_charging_state", false)
-        mDisableCharging?.setOnPreferenceChangeListener(this)
+        Settings.mDisableChargingNotification = mSharedPreference.getBoolean("disable_charging_state", false)
+        mDisableCharging?.onPreferenceChangeListener = this
 
         // Manual Server Refresh
         mCheckServerManual = findPreference("server_reload") as Preference?
@@ -49,12 +48,12 @@ class MainPreferenceFragment : PreferenceFragmentCompat(),  Preference.OnPrefere
         // Server URL
         mServerURLEditor = findPreference("enter_server_url") as EditTextPreference?
         mServerURLEditor?.text = ServerManagement.mServerBaseUrl
-        mServerURLEditor?.setOnPreferenceChangeListener(this)
+        mServerURLEditor?.onPreferenceChangeListener = this
 
         // Server Port
         mServerPortEditor = findPreference("enter_server_port") as EditTextPreference?
         mServerPortEditor?.text = ServerManagement.mServerPort
-        mServerPortEditor?.setOnPreferenceChangeListener(this)
+        mServerPortEditor?.onPreferenceChangeListener = this
     }
 
     override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
@@ -65,13 +64,13 @@ class MainPreferenceFragment : PreferenceFragmentCompat(),  Preference.OnPrefere
             ServerManagement.mServerPort = newValue as String
             mServerManagement.checkServerAlive()
         } else if (preference?.key == "disable_charging_state") {
-            Settings.Companion.mDisableChargingNotification = newValue as Boolean
+            Settings.mDisableChargingNotification = newValue as Boolean
         }
         return true
     }
 
     fun updateServerStatusUI() {
-        val mErrorString: String = "Error connecting server."
+        val mErrorString = "Error connecting server."
 
         if (ServerManagement.mServerStatus) {
             // Server URL Editor
