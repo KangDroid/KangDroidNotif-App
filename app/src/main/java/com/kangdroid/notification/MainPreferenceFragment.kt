@@ -48,10 +48,12 @@ class MainPreferenceFragment : PreferenceFragmentCompat(),  Preference.OnPrefere
 
         // Server URL
         mServerURLEditor = findPreference("enter_server_url") as EditTextPreference?
+        mServerURLEditor?.text = ServerManagement.mServerBaseUrl
         mServerURLEditor?.setOnPreferenceChangeListener(this)
 
         // Server Port
         mServerPortEditor = findPreference("enter_server_port") as EditTextPreference?
+        mServerPortEditor?.text = ServerManagement.mServerPort
         mServerPortEditor?.setOnPreferenceChangeListener(this)
     }
 
@@ -73,9 +75,11 @@ class MainPreferenceFragment : PreferenceFragmentCompat(),  Preference.OnPrefere
 
         if (ServerManagement.mServerStatus) {
             // Server URL Editor
+            mServerURLEditor?.text = ServerManagement.mServerBaseUrl
             mServerURLEditor?.summary = ServerManagement.mServerBaseUrl
 
             // Server Port Editor
+            mServerPortEditor?.text = ServerManagement.mServerPort
             mServerPortEditor?.summary = ServerManagement.mServerPort
 
             // Overall Server Connection State
