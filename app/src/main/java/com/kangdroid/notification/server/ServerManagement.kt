@@ -61,6 +61,9 @@ class ServerManagement {
             override fun onFailure(call: Call<String>, t: Throwable) {
                 Log.e(TAG_SERVER, "$t")
                 mServerStatus = false
+
+                // Refresh Main UI
+                mMainUI?.updateServerStatusUI()
             }
         })
     }
