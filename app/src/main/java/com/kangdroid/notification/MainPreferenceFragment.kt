@@ -67,14 +67,23 @@ class MainPreferenceFragment : PreferenceFragmentCompat(),  Preference.OnPrefere
     }
 
     override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
-        if (preference?.key == KEY_SERVER_URLEDIT) {
-            ServerManagement.mServerBaseUrl = newValue as String
-            mServerManagement.checkServerAlive()
-        } else if (preference?.key == KEY_SERVER_PORTEDIT) {
-            ServerManagement.mServerPort = newValue as String
-            mServerManagement.checkServerAlive()
-        } else if (preference?.key == KEY_DISABLE_CHARGING) {
-            Settings.mDisableChargingNotification = newValue as Boolean
+        when (preference?.key) {
+            // URL Edit Update
+            KEY_SERVER_URLEDIT -> {
+                ServerManagement.mServerBaseUrl = newValue as String
+                mServerManagement.checkServerAlive()
+            }
+
+            // Port Edit Update
+            KEY_SERVER_PORTEDIT -> {
+                ServerManagement.mServerPort = newValue as String
+                mServerManagement.checkServerAlive()
+            }
+
+            // Charging Notification Update
+            KEY_DISABLE_CHARGING -> {
+                Settings.mDisableChargingNotification = newValue as Boolean
+            }
         }
         return true
     }
