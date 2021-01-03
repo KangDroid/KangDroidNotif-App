@@ -43,17 +43,10 @@ class MainPreferenceFragment : PreferenceFragmentCompat(),  Preference.OnPrefere
         }
         mServerManagement.checkServerAlive(mUpdateServerStatus, mServerStatus)
 
-        val mPreferenceChangeListener: (preference: Preference, newValue: Any) -> Boolean = {preference: Preference, newValue: Any ->
-            if (preference.key == "disable_charging_state") {
-                Settings.Companion.mDisableChargingNotification = newValue as Boolean
-            }
-            true
-        }
-
         // Charging-Disable SwitchPreference
         mDisableCharging = findPreference("disable_charging_state") as SwitchPreference?
         Settings.Companion.mDisableChargingNotification = mSharedPreference.getBoolean("disable_charging_state", false)
-        mDisableCharging?.setOnPreferenceChangeListener(mPreferenceChangeListener)
+        mDisableCharging?.setOnPreferenceChangeListener(this)
 
         // Manual Server Refresh
         mCheckServerManual = findPreference("server_reload") as Preference?
@@ -80,6 +73,8 @@ class MainPreferenceFragment : PreferenceFragmentCompat(),  Preference.OnPrefere
         } else if (preference?.key == "enter_server_port") {
             ServerManagement.mServerPort = newValue as String
             mServerManagement.checkServerAlive(null, 1)
+        } else if (preference?.key == "disable_charging_state") {
+            Settings.Companion.mDisableChargingNotification = newValue as Boolean
         }
         return true
     }
