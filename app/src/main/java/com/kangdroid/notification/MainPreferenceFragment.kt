@@ -51,9 +51,7 @@ class MainPreferenceFragment : PreferenceFragmentCompat(),  Preference.OnPrefere
         // Manual Server Refresh
         mCheckServerManual = findPreference(KEY_SERVER_RELOAD) as? Preference ?: throw PreferenceNullException()
         mCheckServerManual.setOnPreferenceClickListener {
-            if (it.key == KEY_SERVER_RELOAD) {
-                mServerManagement.checkServerAlive()
-            }
+            mServerManagement.checkServerAlive()
             true
         }
 
