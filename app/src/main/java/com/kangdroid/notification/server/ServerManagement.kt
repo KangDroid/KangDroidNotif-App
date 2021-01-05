@@ -14,15 +14,21 @@ import kotlin.jvm.Throws
 
 class ServerManagement {
     private val TAG_SERVER = "ServerManagement"
+    private lateinit var mRetrofit: Retrofit
+    private lateinit var mApi: CallAPI
+
     companion object {
         var mServerStatus: Boolean = false
         var mServerBaseUrl : String = "http://192.168.0.46"
         var mServerPort: String = "8080"
         var mMainUI: MainPreferenceFragment? = null
     }
-    fun checkServerAlive() {
-        var mRetrofit: Retrofit
 
+    init {
+        initServer()
+    }
+
+    fun initServer() {
         try {
             mRetrofit = Retrofit.Builder()
                     .baseUrl("$mServerBaseUrl:$mServerPort")
@@ -41,8 +47,11 @@ class ServerManagement {
             mMainUI?.updateServerStatusUI()
             return
         }
+        mApi = mRetrofit.create(CallAPI::class.java)
+    }
 
-        val mApi = mRetrofit.create(CallAPI::class.java)
+    fun checkServerAlive() {
+        initServer()
         val mGetValue = mApi.getNotificationCount()
         mGetValue.enqueue(object: Callback<String> {
             override fun onResponse(call: Call<String>, response: Response<String>) {
@@ -90,11 +99,6 @@ class ServerManagement {
             Log.e(TAG_SERVER, "Either of title/content/reqPackage is NULL. Skipping posting.")
             return
         }
-        val mRetrofit = Retrofit.Builder()
-                .baseUrl("$mServerBaseUrl:$mServerPort")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-        val mApi = mRetrofit.create(CallAPI::class.java)
 
         var inputParam: HashMap<String, Any> = HashMap()
         with(inputParam) {
