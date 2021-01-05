@@ -18,17 +18,15 @@ class ServerManagement {
     private lateinit var mApi: CallAPI
 
     companion object {
-        var mServerStatus: Boolean = false
         var mServerBaseUrl : String = "http://192.168.0.46"
         var mServerPort: String = "8080"
-        var mMainUI: MainPreferenceFragment? = null
     }
 
     init {
         initServer()
     }
 
-    fun initServer() {
+    fun initServer(): Boolean {
         try {
             mRetrofit = Retrofit.Builder()
                     .baseUrl("$mServerBaseUrl:$mServerPort")
@@ -40,41 +38,27 @@ class ServerManagement {
             Log.e(TAG_SERVER, "Error occurred when connecting server: ${e.message}")
             Log.e(TAG_SERVER, "StackTrace: ${e.stackTrace}")
 
-            // Set Server status to OFFLINE
-            mServerStatus = false
-
-            // Refresh Main UI
-            mMainUI?.updateServerStatusUI()
-            return
+            return false
         }
         mApi = mRetrofit.create(CallAPI::class.java)
+
+        return true
     }
 
-    fun checkServerAlive() {
-        initServer()
+    fun checkServerAlive(): Boolean {
+        if (!initServer()) {
+            return false
+        }
         val mGetValue = mApi.getNotificationCount()
-        mGetValue.enqueue(object: Callback<String> {
-            override fun onResponse(call: Call<String>, response: Response<String>) {
-                mServerStatus = if (response.isSuccessful) {
-                    Log.d(TAG_SERVER, "Successful Response!")
-                    true
-                } else {
-                    Log.e(TAG_SERVER, "onResponse is called, but value was not successful")
-                    false
-                }
+        var mResponse: Response<String>? = null
 
-                // Refresh Main UI
-                mMainUI?.updateServerStatusUI()
-            }
+        try {
+            mResponse = mGetValue.execute()
+        } catch (e: Exception) {
+            Log.e(TAG_SERVER, "Error Connecting server: ${mServerBaseUrl}:${mServerPort}")
+        }
 
-            override fun onFailure(call: Call<String>, t: Throwable) {
-                Log.e(TAG_SERVER, "$t")
-                mServerStatus = false
-
-                // Refresh Main UI
-                mMainUI?.updateServerStatusUI()
-            }
-        })
+        return mResponse?.isSuccessful ?: false
     }
 
     fun getCurDateInFormat(): String {
@@ -86,10 +70,9 @@ class ServerManagement {
     /**
      * POST Method
      */
-    fun call_post_retro(title: String?, content: String?, reqPackage: String?) {
-        if (!mServerStatus) {
-            Log.e(TAG_SERVER, "Server is NOT running")
-            return
+    fun call_post_retro(title: String?, content: String?, reqPackage: String?): Boolean {
+        if (!initServer()) {
+            return false
         }
         /**
          * TODO: Prompt to user
@@ -97,7 +80,7 @@ class ServerManagement {
          */
         if (title == null || content == null || reqPackage == null) {
             Log.e(TAG_SERVER, "Either of title/content/reqPackage is NULL. Skipping posting.")
-            return
+            return false
         }
 
         var inputParam: HashMap<String, Any> = HashMap()
@@ -108,21 +91,9 @@ class ServerManagement {
             put("genDate", getCurDateInFormat())
         }
 
-        mApi.postTestValue(inputParam).enqueue(object : Callback<NotificationData> {
-            override fun onResponse(
-                    call: Call<NotificationData>,
-                    response: Response<NotificationData>
-            ) {
-                if (response.isSuccessful) {
-                    Log.d(TAG_SERVER, "Post completed!")
-                } else {
-                    Log.e(TAG_SERVER, "onResponse: But Failed")
-                }
-            }
+        var mPostValue = mApi.postTestValue(inputParam)
+        val mResponse: Response<NotificationData> = mPostValue.execute()
 
-            override fun onFailure(call: Call<NotificationData>, t: Throwable) {
-                Log.e(TAG_SERVER, "$t")
-            }
-        })
+        return mResponse.isSuccessful
     }
 }

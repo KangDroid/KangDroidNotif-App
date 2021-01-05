@@ -8,6 +8,9 @@ import com.kangdroid.notification.dto.NotificationData
 import com.kangdroid.notification.server.CallAPI
 import com.kangdroid.notification.server.ServerManagement
 import com.kangdroid.notification.settings.Settings
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -55,6 +58,11 @@ class KangDroidNotificationListener : NotificationListenerService() {
         Log.d(TAG_VAL, "Notification Text: ${sbn.notification?.extras?.getString("android.text")}")
 
         // Call post
-        mServerManager.call_post_retro("${sbn.notification?.extras?.getString("android.title")}", "${sbn.notification?.extras?.getString("android.text")}", sbn.packageName)
+        GlobalScope.launch(Dispatchers.IO) {
+            val isSucceed: Boolean = mServerManager.call_post_retro("${sbn.notification?.extras?.getString("android.title")}", "${sbn.notification?.extras?.getString("android.text")}", sbn.packageName)
+            if (!isSucceed) {
+                Log.e(TAG_VAL, "Failed to Update DB")
+            }
+        }
     }
 }
