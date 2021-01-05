@@ -1,3 +1,34 @@
 <resources>
+    <!-- Manifest String -->
     <string name="app_name">KangDroidNotification</string>
+    <string name="kdr_notification_service">KangDroidNotificationListener</string>
+
+    <!-- Mostly Java-Related Strings -->
+    <string name="server_off">Server Status: OFF</string>
+    <string name="server_on">Server Status: ON</string>
+    <string name="server_connection_error">Error connecting server.</string>
+    <string name="getting_app_list">Getting Application Lists…</string>
+
+    <!-- Server Related Management -->
+    <string name="server_management_title">Server-Related Management</string>
+
+    <!-- Editing Server URL -->
+    <string name="default_enter_server_url">Enter Server URL[Without Port]</string>
+    <string name="server_url_title">Set Server URL</string>
+
+    <!-- Editing Server Port -->
+    <string name="default_enter_server_port">Enter Server Port</string>
+    <string name="server_port_title">Set Server Port</string>
+
+    <!-- Server Reload -->
+    <string name="manual_server_reload">Check for server availability manually</string>
+
+    <!-- Notification Management -->
+    <string name="notification_manage_title">Notification Management</string>
+
+    <!-- Charging State Switch -->
+    <string name="charging_state">Disable Charging State</string>
+
+    <!-- Notification Blacklist -->
+    <string name="blacklist_title">Add Notification Blacklist</string>
 </resources>

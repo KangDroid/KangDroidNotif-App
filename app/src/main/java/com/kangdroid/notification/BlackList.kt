@@ -63,7 +63,7 @@ class BlackList: PreferenceFragmentCompat(), Preference.OnPreferenceChangeListen
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         mProgressDialog = ProgressDialog(activity)
         mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER)
-        mProgressDialog.setMessage("Getting Application Lists...")
+        mProgressDialog.setMessage(getString(R.string.getting_app_list))
 
         // Shared Preference for getting values
         mSharedPreference = PreferenceManager.getDefaultSharedPreferences(activity)

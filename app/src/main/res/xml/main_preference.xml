@@ -2,19 +2,19 @@
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <PreferenceCategory android:title="Server-Related Management"
+    <PreferenceCategory android:title="@string/server_management_title"
         app:iconSpaceReserved="false">
 
         <EditTextPreference
-            android:defaultValue="Enter Server URL[Without Port]"
+            android:defaultValue="@string/default_enter_server_url"
             android:key="enter_server_url"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:title="Set Server URL"
+            android:title="@string/server_url_title"
             app:iconSpaceReserved="false"/>
 
         <EditTextPreference
-            android:defaultValue="Enter Server port"
+            android:defaultValue="@string/default_enter_server_port"
             android:key="enter_server_port"
             android:selectAllOnFocus="true"
             android:singleLine="true"
@@ -24,27 +24,27 @@
         <Preference
             android:key="server_status"
             android:selectable="true"
-            android:title="Server Status: "
+            android:title="@string/server_off"
             app:iconSpaceReserved="false"/>
 
         <Preference
             android:key="server_reload"
             android:selectable="true"
-            android:title="Check for server availability manually"
+            android:title="@string/manual_server_reload"
             app:iconSpaceReserved="false" />
 
     </PreferenceCategory>
-    <PreferenceCategory android:title="Notification Management"
+    <PreferenceCategory android:title="@string/notification_manage_title"
         app:iconSpaceReserved="false">
 
         <SwitchPreference
             android:defaultValue="false"
             android:key="disable_charging_state"
-            android:title="Disable Charging State"
+            android:title="@string/charging_state"
             app:iconSpaceReserved="false"/>
         <Preference
             android:key="blacklist_notification"
-            android:title="Add Notification Blacklist"
+            android:title="@string/blacklist_title"
             android:fragment="com.kangdroid.notification.BlackList"
             app:iconSpaceReserved="false"/>
     </PreferenceCategory>

@@ -40,7 +40,7 @@ class MainPreferenceFragment : PreferenceFragmentCompat(),  Preference.OnPrefere
 
         // Preference
         mServerStatus = findPreference(KEY_SERVER_STATUS) as? Preference ?: throw PreferenceNullException()
-        mServerStatus.title = "Server Status: OFF"
+        mServerStatus.title = getString(R.string.server_off)
         mServerManagement.checkServerAlive()
 
         // Charging-Disable SwitchPreference
@@ -89,7 +89,7 @@ class MainPreferenceFragment : PreferenceFragmentCompat(),  Preference.OnPrefere
     }
 
     fun updateServerStatusUI() {
-        val mErrorString = "Error connecting server."
+        val mErrorString = getString(R.string.server_connection_error)
 
         if (ServerManagement.mServerStatus) {
             // Server URL Editor
@@ -101,7 +101,7 @@ class MainPreferenceFragment : PreferenceFragmentCompat(),  Preference.OnPrefere
             mServerPortEditor.summary = ServerManagement.mServerPort
 
             // Overall Server Connection State
-            mServerStatus.title = "Server Status: ON"
+            mServerStatus.title = getString(R.string.server_on)
 
         } else {
             // Server URL Editor
@@ -111,7 +111,7 @@ class MainPreferenceFragment : PreferenceFragmentCompat(),  Preference.OnPrefere
             mServerPortEditor.summary = mErrorString
 
             // Overall Server Connection State
-            mServerStatus.title = "Server Status: OFF"
+            mServerStatus.title = getString(R.string.server_off)
         }
     }
 }
