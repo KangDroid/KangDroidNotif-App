@@ -21,7 +21,6 @@ class MainPreferenceFragment : PreferenceFragmentCompat(),  Preference.OnPrefere
     private val KEY_SERVER_PORTEDIT: String = "enter_server_port"
 
     // UI Variable
-
     private lateinit var mServerStatus: Preference
     private lateinit var mDisableCharging: SwitchPreference
     private lateinit var mCheckServerManual: Preference
@@ -40,10 +39,11 @@ class MainPreferenceFragment : PreferenceFragmentCompat(),  Preference.OnPrefere
         // Shared Preference for getting values
         val mSharedPreference = PreferenceManager.getDefaultSharedPreferences(activity)
 
-
         // Preference
         mServerStatus = findPreference(KEY_SERVER_STATUS) as? Preference ?: throw PreferenceNullException()
         mServerStatus.title = getString(R.string.server_off)
+
+        // Check for Server availability
         GlobalScope.launch(Dispatchers.IO) {
             val mSucceed = mServerManagement.checkServerAlive()
 

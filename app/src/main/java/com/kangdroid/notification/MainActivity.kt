@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity(), PreferenceFragmentCompat.OnPreferenceS
         supportFragmentManager.beginTransaction()
                 .replace(R.id.main_pref, mFragment)
                 .addToBackStack(null)
-                .commit();
+                .commit()
         return true
     }
 }
