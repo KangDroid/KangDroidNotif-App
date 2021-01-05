@@ -3,14 +3,13 @@ package com.kangdroid.notification
 import android.os.Bundle
 import android.util.Log
 import android.widget.Switch
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.whenResumed
 import androidx.preference.*
 import com.kangdroid.notification.exception.PreferenceNullException
 import com.kangdroid.notification.server.ServerManagement
 import com.kangdroid.notification.settings.Settings
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import java.lang.IllegalArgumentException
 
 class MainPreferenceFragment : PreferenceFragmentCompat(),  Preference.OnPreferenceChangeListener {
@@ -31,6 +30,9 @@ class MainPreferenceFragment : PreferenceFragmentCompat(),  Preference.OnPrefere
 
     // Server - Related Variable
     private val mServerManagement: ServerManagement = ServerManagement()
+
+    // Server Monitoring
+    private lateinit var mServerMonitor: Job
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.main_preference, rootKey)
@@ -77,6 +79,26 @@ class MainPreferenceFragment : PreferenceFragmentCompat(),  Preference.OnPrefere
         mServerPortEditor = findPreference(KEY_SERVER_PORTEDIT) as? EditTextPreference ?: throw PreferenceNullException()
         mServerPortEditor.text = ServerManagement.mServerPort
         mServerPortEditor.onPreferenceChangeListener = this
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mServerMonitor.cancel()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Server Status monitor
+        mServerMonitor = GlobalScope.launch(Dispatchers.IO) {
+            while (true) {
+                val mSucceed = mServerManagement.checkServerAlive()
+
+                withContext(Dispatchers.Main) {
+                    updateServerStatusUI(mSucceed)
+                }
+                delay(2000)
+            }
+        }
     }
 
     override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
