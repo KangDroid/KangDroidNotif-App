@@ -11,94 +11,90 @@ import kotlin.IllegalArgumentException
 import kotlin.collections.HashMap
 
 class ServerManagement {
-    private val TAG_SERVER = "ServerManagement"
-    private lateinit var mRetrofit: Retrofit
-    private lateinit var mApi: CallAPI
-
     companion object {
+        private val TAG_SERVER = "ServerManagement"
+        private lateinit var mRetrofit: Retrofit
+        private lateinit var mApi: CallAPI
+
         var mServerBaseUrl : String = "http://192.168.0.46"
         var mServerPort: String = "8080"
-    }
 
-    init {
-        initServer()
-    }
-
-    fun initServer(): Boolean {
-        try {
-            mRetrofit = Retrofit.Builder()
+        fun initServer(): Boolean {
+            try {
+                mRetrofit = Retrofit.Builder()
                     .baseUrl("$mServerBaseUrl:$mServerPort")
                     .addConverterFactory(GsonConverterFactory.create())
                     .build()
-        } catch (e: IllegalArgumentException) {
+            } catch (e: IllegalArgumentException) {
 
-            // When IAE Occurred
-            Log.e(TAG_SERVER, "Error occurred when connecting server: ${e.message}")
-            e.printStackTrace()
+                // When IAE Occurred
+                Log.e(TAG_SERVER, "Error occurred when connecting server: ${e.message}")
+                e.printStackTrace()
 
-            return false
-        }
-        mApi = mRetrofit.create(CallAPI::class.java)
+                return false
+            }
+            mApi = mRetrofit.create(CallAPI::class.java)
 
-        return true
-    }
-
-    fun checkServerAlive(): Boolean {
-        if (!initServer()) {
-            return false
-        }
-        val mGetValue = mApi.getNotificationCount()
-        var mResponse: Response<String>? = null
-
-        try {
-            mResponse = mGetValue.execute()
-        } catch (e: Exception) {
-            Log.e(TAG_SERVER, "Error Connecting server: ${mServerBaseUrl}:${mServerPort}")
-            Log.e(TAG_SERVER, e.stackTraceToString())
+            return true
         }
 
-        return mResponse?.isSuccessful ?: false
-    }
+        fun checkServerAlive(): Boolean {
+            if (!initServer()) {
+                return false
+            }
+            val mGetValue = mApi.getNotificationCount()
+            var mResponse: Response<String>? = null
 
-    fun getCurDateInFormat(): String {
-        val todayDate: Date = Calendar.getInstance().time
-        val formatDate: DateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
-        return formatDate.format(todayDate)
-    }
+            try {
+                mResponse = mGetValue.execute()
+            } catch (e: Exception) {
+                Log.e(TAG_SERVER, "Error Connecting server: ${mServerBaseUrl}:${mServerPort}")
+                Log.e(TAG_SERVER, e.stackTraceToString())
+            }
 
-    /**
-     * POST Method
-     */
-    fun call_post_retro(title: String?, content: String?, reqPackage: String?): Boolean {
-        if (!initServer()) {
-            return false
+            return mResponse?.isSuccessful ?: false
         }
+
+        fun getCurDateInFormat(): String {
+            val todayDate: Date = Calendar.getInstance().time
+            val formatDate: DateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
+            return formatDate.format(todayDate)
+        }
+
         /**
-         * TODO: Prompt to user
-         * TODO: Also give more debugging information.
+         * POST Method
          */
-        if (title == null || content == null || reqPackage == null) {
-            Log.e(TAG_SERVER, "Either of title/content/reqPackage is NULL. Skipping posting.")
-            return false
+        fun call_post_retro(title: String?, content: String?, reqPackage: String?): Boolean {
+            if (!initServer()) {
+                return false
+            }
+            /**
+             * TODO: Prompt to user
+             * TODO: Also give more debugging information.
+             */
+            if (title == null || content == null || reqPackage == null) {
+                Log.e(TAG_SERVER, "Either of title/content/reqPackage is NULL. Skipping posting.")
+                return false
+            }
+
+            var inputParam: HashMap<String, Any> = HashMap()
+            with(inputParam) {
+                put("reqPackage", reqPackage)
+                put("title", title)
+                put("content", content)
+                put("genDate", getCurDateInFormat())
+            }
+
+            val mPostValue = mApi.postTestValue(inputParam)
+            var mResponse: Response<NotificationData>? = null
+
+            try {
+                mResponse = mPostValue.execute()
+            } catch (e: Exception) {
+                Log.e(TAG_SERVER, e.stackTraceToString())
+            }
+
+            return mResponse?.isSuccessful ?: false
         }
-
-        var inputParam: HashMap<String, Any> = HashMap()
-        with(inputParam) {
-            put("reqPackage", reqPackage)
-            put("title", title)
-            put("content", content)
-            put("genDate", getCurDateInFormat())
-        }
-
-        val mPostValue = mApi.postTestValue(inputParam)
-        var mResponse: Response<NotificationData>? = null
-
-        try {
-            mResponse = mPostValue.execute()
-        } catch (e: Exception) {
-            Log.e(TAG_SERVER, e.stackTraceToString())
-        }
-
-        return mResponse?.isSuccessful ?: false
     }
 }

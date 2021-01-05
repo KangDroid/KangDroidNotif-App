@@ -23,7 +23,6 @@ import kotlin.collections.HashMap
 
 class KangDroidNotificationListener : NotificationListenerService() {
     val TAG_VAL: String = "RELKangDroidNotificationListener"
-    val mServerManager: ServerManagement = ServerManagement()
 
     override fun onNotificationRemoved(sbn: StatusBarNotification?) {
         super.onNotificationRemoved(sbn)
@@ -59,7 +58,7 @@ class KangDroidNotificationListener : NotificationListenerService() {
 
         // Call post
         GlobalScope.launch(Dispatchers.IO) {
-            val isSucceed: Boolean = mServerManager.call_post_retro("${sbn.notification?.extras?.getString("android.title")}", "${sbn.notification?.extras?.getString("android.text")}", sbn.packageName)
+            val isSucceed: Boolean = ServerManagement.call_post_retro("${sbn.notification?.extras?.getString("android.title")}", "${sbn.notification?.extras?.getString("android.text")}", sbn.packageName)
             if (!isSucceed) {
                 Log.e(TAG_VAL, "Failed to Update DB")
             }

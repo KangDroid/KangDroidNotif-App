@@ -22,9 +22,6 @@ class MainPreferenceFragment : PreferenceFragmentCompat(), Preference.OnPreferen
     private lateinit var mServerURLEditor: EditTextPreference
     private lateinit var mServerPortEditor: EditTextPreference
 
-    // Server - Related Variable
-    private val mServerManagement: ServerManagement = ServerManagement()
-
     // Server Monitoring
     private lateinit var mServerMonitor: Job
 
@@ -41,7 +38,7 @@ class MainPreferenceFragment : PreferenceFragmentCompat(), Preference.OnPreferen
 
         // Check for Server availability
         GlobalScope.launch(Dispatchers.IO) {
-            val mSucceed = mServerManagement.checkServerAlive()
+            val mSucceed = ServerManagement.checkServerAlive()
 
             withContext(Dispatchers.Main) {
                 updateServerStatusUI(mSucceed)
@@ -60,7 +57,7 @@ class MainPreferenceFragment : PreferenceFragmentCompat(), Preference.OnPreferen
             findPreference(KEY_SERVER_RELOAD) as? Preference ?: throw PreferenceNullException()
         mCheckServerManual.setOnPreferenceClickListener {
             GlobalScope.launch(Dispatchers.IO) {
-                val mSucceed = mServerManagement.checkServerAlive()
+                val mSucceed = ServerManagement.checkServerAlive()
 
                 withContext(Dispatchers.Main) {
                     updateServerStatusUI(mSucceed)
@@ -92,7 +89,7 @@ class MainPreferenceFragment : PreferenceFragmentCompat(), Preference.OnPreferen
         // Server Status monitor
         mServerMonitor = GlobalScope.launch(Dispatchers.IO) {
             while (true) {
-                val mSucceed = mServerManagement.checkServerAlive()
+                val mSucceed = ServerManagement.checkServerAlive()
 
                 withContext(Dispatchers.Main) {
                     updateServerStatusUI(mSucceed)
@@ -108,7 +105,7 @@ class MainPreferenceFragment : PreferenceFragmentCompat(), Preference.OnPreferen
             KEY_SERVER_URLEDIT -> {
                 ServerManagement.mServerBaseUrl = newValue as String
                 GlobalScope.launch(Dispatchers.IO) {
-                    val mSucceed = mServerManagement.checkServerAlive()
+                    val mSucceed = ServerManagement.checkServerAlive()
 
                     withContext(Dispatchers.Main) {
                         updateServerStatusUI(mSucceed)
@@ -120,7 +117,7 @@ class MainPreferenceFragment : PreferenceFragmentCompat(), Preference.OnPreferen
             KEY_SERVER_PORTEDIT -> {
                 ServerManagement.mServerPort = newValue as String
                 GlobalScope.launch(Dispatchers.IO) {
-                    val mSucceed = mServerManagement.checkServerAlive()
+                    val mSucceed = ServerManagement.checkServerAlive()
 
                     withContext(Dispatchers.Main) {
                         updateServerStatusUI(mSucceed)
