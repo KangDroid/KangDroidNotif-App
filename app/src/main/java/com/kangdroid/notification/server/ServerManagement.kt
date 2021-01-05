@@ -1,16 +1,14 @@
 package com.kangdroid.notification.server
 
 import android.util.Log
-import com.kangdroid.notification.MainPreferenceFragment
 import com.kangdroid.notification.dto.NotificationData
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
-import java.lang.IllegalArgumentException
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.IllegalArgumentException
 import kotlin.collections.HashMap
-import kotlin.jvm.Throws
 
 class ServerManagement {
     private val TAG_SERVER = "ServerManagement"
@@ -36,7 +34,7 @@ class ServerManagement {
 
             // When IAE Occurred
             Log.e(TAG_SERVER, "Error occurred when connecting server: ${e.message}")
-            Log.e(TAG_SERVER, "StackTrace: ${e.stackTrace}")
+            e.printStackTrace()
 
             return false
         }
@@ -56,6 +54,7 @@ class ServerManagement {
             mResponse = mGetValue.execute()
         } catch (e: Exception) {
             Log.e(TAG_SERVER, "Error Connecting server: ${mServerBaseUrl}:${mServerPort}")
+            Log.e(TAG_SERVER, e.stackTraceToString())
         }
 
         return mResponse?.isSuccessful ?: false
@@ -91,9 +90,15 @@ class ServerManagement {
             put("genDate", getCurDateInFormat())
         }
 
-        var mPostValue = mApi.postTestValue(inputParam)
-        val mResponse: Response<NotificationData> = mPostValue.execute()
+        val mPostValue = mApi.postTestValue(inputParam)
+        var mResponse: Response<NotificationData>? = null
 
-        return mResponse.isSuccessful
+        try {
+            mResponse = mPostValue.execute()
+        } catch (e: Exception) {
+            Log.e(TAG_SERVER, e.stackTraceToString())
+        }
+
+        return mResponse?.isSuccessful ?: false
     }
 }
