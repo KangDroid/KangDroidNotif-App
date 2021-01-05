@@ -1,18 +1,13 @@
 package com.kangdroid.notification
 
 import android.os.Bundle
-import android.util.Log
-import android.widget.Switch
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.whenResumed
 import androidx.preference.*
 import com.kangdroid.notification.exception.PreferenceNullException
 import com.kangdroid.notification.server.ServerManagement
 import com.kangdroid.notification.settings.Settings
 import kotlinx.coroutines.*
-import java.lang.IllegalArgumentException
 
-class MainPreferenceFragment : PreferenceFragmentCompat(),  Preference.OnPreferenceChangeListener {
+class MainPreferenceFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener {
     // UI Constants
     private val KEY_SERVER_STATUS: String = "server_status"
     private val KEY_DISABLE_CHARGING: String = "disable_charging_state"
@@ -40,7 +35,8 @@ class MainPreferenceFragment : PreferenceFragmentCompat(),  Preference.OnPrefere
         val mSharedPreference = PreferenceManager.getDefaultSharedPreferences(activity)
 
         // Preference
-        mServerStatus = findPreference(KEY_SERVER_STATUS) as? Preference ?: throw PreferenceNullException()
+        mServerStatus =
+            findPreference(KEY_SERVER_STATUS) as? Preference ?: throw PreferenceNullException()
         mServerStatus.title = getString(R.string.server_off)
 
         // Check for Server availability
@@ -53,12 +49,15 @@ class MainPreferenceFragment : PreferenceFragmentCompat(),  Preference.OnPrefere
         }
 
         // Charging-Disable SwitchPreference
-        mDisableCharging = findPreference(KEY_DISABLE_CHARGING) as? SwitchPreference ?: throw PreferenceNullException()
-        Settings.mDisableChargingNotification = mSharedPreference.getBoolean(KEY_DISABLE_CHARGING, false)
+        mDisableCharging = findPreference(KEY_DISABLE_CHARGING) as? SwitchPreference
+            ?: throw PreferenceNullException()
+        Settings.mDisableChargingNotification =
+            mSharedPreference.getBoolean(KEY_DISABLE_CHARGING, false)
         mDisableCharging.onPreferenceChangeListener = this
 
         // Manual Server Refresh
-        mCheckServerManual = findPreference(KEY_SERVER_RELOAD) as? Preference ?: throw PreferenceNullException()
+        mCheckServerManual =
+            findPreference(KEY_SERVER_RELOAD) as? Preference ?: throw PreferenceNullException()
         mCheckServerManual.setOnPreferenceClickListener {
             GlobalScope.launch(Dispatchers.IO) {
                 val mSucceed = mServerManagement.checkServerAlive()
@@ -71,12 +70,14 @@ class MainPreferenceFragment : PreferenceFragmentCompat(),  Preference.OnPrefere
         }
 
         // Server URL
-        mServerURLEditor = findPreference(KEY_SERVER_URLEDIT) as? EditTextPreference ?: throw PreferenceNullException()
+        mServerURLEditor = findPreference(KEY_SERVER_URLEDIT) as? EditTextPreference
+            ?: throw PreferenceNullException()
         mServerURLEditor.text = ServerManagement.mServerBaseUrl
         mServerURLEditor.onPreferenceChangeListener = this
 
         // Server Port
-        mServerPortEditor = findPreference(KEY_SERVER_PORTEDIT) as? EditTextPreference ?: throw PreferenceNullException()
+        mServerPortEditor = findPreference(KEY_SERVER_PORTEDIT) as? EditTextPreference
+            ?: throw PreferenceNullException()
         mServerPortEditor.text = ServerManagement.mServerPort
         mServerPortEditor.onPreferenceChangeListener = this
     }
