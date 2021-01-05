@@ -62,7 +62,7 @@ class ServerManagement {
 
     fun getCurDateInFormat(): String {
         val todayDate: Date = Calendar.getInstance().time
-        val formatDate: DateFormat = SimpleDateFormat("yyyy-mm-dd hh:mm:ss")
+        val formatDate: DateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
         return formatDate.format(todayDate)
     }
 
