@@ -11,22 +11,34 @@ import android.os.AsyncTask
 import android.util.Log
 import androidx.preference.*
 import com.kangdroid.notification.settings.Settings
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class BlackList: PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener {
     var mSwitchMap: HashMap<SwitchPreference, String> = HashMap()
-    lateinit var mProgressDialog: ProgressDialog
-    lateinit var mScreen: PreferenceScreen
-    lateinit var mSharedPreference: SharedPreferences
-    lateinit var mThisWrapper: BlackList
+    private lateinit var mProgressDialog: ProgressDialog
+    private lateinit var mScreen: PreferenceScreen
+    private lateinit var mSharedPreference: SharedPreferences
+    private lateinit var mThisWrapper: BlackList
 
-    inner class ShowProgress: AsyncTask<Void, Void, Unit>() {
+    @SuppressLint("WrongConstant")
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        mProgressDialog = ProgressDialog(activity)
+        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER)
+        mProgressDialog.setMessage(getString(R.string.getting_app_list))
 
-        override fun onPreExecute() {
-            mProgressDialog.show()
-        }
+        // Shared Preference for getting values
+        mSharedPreference = PreferenceManager.getDefaultSharedPreferences(activity)
+        mScreen = preferenceManager.createPreferenceScreen(activity)
+        mThisWrapper = this
 
-        @SuppressLint("WrongConstant")
-        override fun doInBackground(vararg params: Void?) {
+        // Show Progress Dialog
+        mProgressDialog.show()
+
+        // EX doExcute()
+        GlobalScope.launch(Dispatchers.Default) {
             val mPackageManager = activity?.packageManager
             val mPackages: List<PackageInfo> = mPackageManager?.getInstalledPackages(PackageManager.MATCH_ALL)!!
             for (i in mPackages.indices) {
@@ -51,26 +63,12 @@ class BlackList: PreferenceFragmentCompat(), Preference.OnPreferenceChangeListen
 
             // Set PreferenceScreens
             preferenceScreen = mScreen
-            return
+
+            // post work
+            withContext(Dispatchers.Main) {
+                mProgressDialog.dismiss()
+            }
         }
-
-        override fun onPostExecute(result: Unit?) {
-            mProgressDialog.dismiss()
-        }
-    }
-
-    @SuppressLint("WrongConstant")
-    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        mProgressDialog = ProgressDialog(activity)
-        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER)
-        mProgressDialog.setMessage(getString(R.string.getting_app_list))
-
-        // Shared Preference for getting values
-        mSharedPreference = PreferenceManager.getDefaultSharedPreferences(activity)
-        mScreen = preferenceManager.createPreferenceScreen(activity)
-        mThisWrapper = this
-
-        ShowProgress().execute()
     }
 
     /**
