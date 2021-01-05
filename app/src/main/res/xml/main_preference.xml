@@ -5,6 +5,12 @@
     <PreferenceCategory android:title="@string/server_management_title"
         app:iconSpaceReserved="false">
 
+        <Preference
+            android:key="advanced_server_settings"
+            android:title="@string/advanced_server_category"
+            android:fragment="com.kangdroid.notification.AdvancedServerSettings"
+            app:iconSpaceReserved="false" />
+
         <EditTextPreference
             android:defaultValue="@string/default_enter_server_url"
             android:key="enter_server_url"

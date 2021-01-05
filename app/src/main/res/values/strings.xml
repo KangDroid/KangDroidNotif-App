@@ -31,4 +31,7 @@
 
     <!-- Notification Blacklist -->
     <string name="blacklist_title">Add Notification Blacklist</string>
+
+    <!-- Advanced Server Settings -->
+    <string name="advanced_server_category">Advanced Server Settings</string>
 </resources>
