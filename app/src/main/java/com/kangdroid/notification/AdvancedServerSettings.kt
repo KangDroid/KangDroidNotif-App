@@ -1,8 +1,12 @@
 package com.kangdroid.notification
 
 import android.os.Bundle
+import android.text.InputType
 import androidx.fragment.app.activityViewModels
-import androidx.preference.*
+import androidx.preference.EditTextPreference
+import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreference
 import com.kangdroid.notification.exception.PreferenceNullException
 import com.kangdroid.notification.server.ServerManagement
 import com.kangdroid.notification.viewmodel.SharedViewModel
@@ -22,6 +26,7 @@ class AdvancedServerSettings : PreferenceFragmentCompat(), Preference.OnPreferen
     private lateinit var mServerURLEditor: EditTextPreference
     private lateinit var mServerPortEditor: EditTextPreference
     private lateinit var mServerAutoChecking: SwitchPreference
+    private lateinit var mServerAutoInterval: EditTextPreference
 
     // View Model
     private val mSharedViewModel: SharedViewModel by activityViewModels()
@@ -56,9 +61,20 @@ class AdvancedServerSettings : PreferenceFragmentCompat(), Preference.OnPreferen
         mServerPortEditor.onPreferenceChangeListener = this
 
         // Server Auto Checking Switch
-        mServerAutoChecking = findPreference(mSharedViewModel.KEY_SERVER_AUTOCHECKING) as? SwitchPreference
-            ?: throw PreferenceNullException()
+        mServerAutoChecking =
+            findPreference(mSharedViewModel.KEY_SERVER_AUTOCHECKING) as? SwitchPreference
+                ?: throw PreferenceNullException()
         mServerAutoChecking.onPreferenceChangeListener = this
+
+        // Server Auto Checking Interval
+        mServerAutoInterval =
+            findPreference(mSharedViewModel.KEY_SERVER_AUTOCHECKING_INTR) as? EditTextPreference
+                ?: throw PreferenceNullException()
+        mServerAutoInterval.setOnBindEditTextListener { editText ->
+            editText.inputType = InputType.TYPE_CLASS_NUMBER
+        }
+        mServerAutoInterval.summary = (mSharedViewModel.mAutoCheckingInterval).toString()
+        mServerAutoInterval.onPreferenceChangeListener = this
 
     }
 
@@ -94,11 +110,32 @@ class AdvancedServerSettings : PreferenceFragmentCompat(), Preference.OnPreferen
             mSharedViewModel.KEY_SERVER_AUTOCHECKING -> {
                 mSharedViewModel.mAutoCheckingEnabled = newValue as Boolean
             }
+
+            // Server Auto-Checking Interval
+            mSharedViewModel.KEY_SERVER_AUTOCHECKING_INTR -> {
+                when (val mInputRequest: Long = (newValue as String).toLong()) {
+                    in Long.MIN_VALUE until 1000 -> {
+                        // TODO: Show dialog that below 1000ms would cause significant battery drain.
+                        return false
+                    }
+                    in 50000..Long.MAX_VALUE -> {
+                        // TODO: Show Dialog that more than 50000ms is too-slow.
+                        return false
+                    }
+                    in 1000 until 50000 -> {
+                        mSharedViewModel.mAutoCheckingInterval = mInputRequest
+                        mServerAutoInterval.summary = (mSharedViewModel.mAutoCheckingInterval).toString()
+                    }
+                    else -> {
+                        return false
+                    }
+                }
+            }
         }
         return true
     }
 
-    fun updateServerStatusUI(mServerRetStatus: Boolean) {
+    private fun updateServerStatusUI(mServerRetStatus: Boolean) {
         val mErrorString = getString(R.string.server_connection_error)
 
         if (mServerRetStatus) {

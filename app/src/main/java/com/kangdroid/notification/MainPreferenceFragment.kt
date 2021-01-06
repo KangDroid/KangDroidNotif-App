@@ -2,7 +2,10 @@ package com.kangdroid.notification
 
 import android.os.Bundle
 import androidx.fragment.app.activityViewModels
-import androidx.preference.*
+import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceManager
+import androidx.preference.SwitchPreference
 import com.kangdroid.notification.exception.PreferenceNullException
 import com.kangdroid.notification.server.ServerManagement
 import com.kangdroid.notification.settings.Settings
@@ -53,7 +56,12 @@ class MainPreferenceFragment : PreferenceFragmentCompat(), Preference.OnPreferen
         mDisableCharging.onPreferenceChangeListener = this
 
         // Do we need to update?
-        mSharedViewModel.mAutoCheckingEnabled = mSharedPreference.getBoolean(mSharedViewModel.KEY_SERVER_AUTOCHECKING, false)
+        mSharedViewModel.mAutoCheckingEnabled =
+            mSharedPreference.getBoolean(mSharedViewModel.KEY_SERVER_AUTOCHECKING, false)
+        mSharedViewModel.mAutoCheckingInterval = (mSharedPreference.getString(
+            mSharedViewModel.KEY_SERVER_AUTOCHECKING_INTR,
+            "2000"
+        ))!!.toLong()
     }
 
     override fun onPause() {
@@ -75,7 +83,7 @@ class MainPreferenceFragment : PreferenceFragmentCompat(), Preference.OnPreferen
                         updateServerStatusUI(mSucceed)
                         mSharedViewModel.mServerOn = mSucceed
                     }
-                    delay(2000)
+                    delay(mSharedViewModel.mAutoCheckingInterval)
                 }
             }
         } else {
@@ -93,7 +101,7 @@ class MainPreferenceFragment : PreferenceFragmentCompat(), Preference.OnPreferen
         return true
     }
 
-    fun updateServerStatusUI(mServerRetStatus: Boolean) {
+    private fun updateServerStatusUI(mServerRetStatus: Boolean) {
         if (mServerRetStatus) {
             // Overall Server Connection State
             mServerStatus.title = getString(R.string.server_on)

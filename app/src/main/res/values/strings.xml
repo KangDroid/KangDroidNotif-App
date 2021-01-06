@@ -38,4 +38,5 @@
     <!-- Advanced: Auto server checking -->
     <string name="enable_auto_checking">Enable Auto Checking</string>
     <string name="enable_auto_checking_summary">Server availability check support</string>
+    <string name="auto_checking_interval">Auto Checking Interval</string>
 </resources>

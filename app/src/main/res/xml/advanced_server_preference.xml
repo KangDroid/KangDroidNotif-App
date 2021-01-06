@@ -14,6 +14,13 @@
             app:iconSpaceReserved="false" />
 
         <EditTextPreference
+            android:key="auto_checking_interval"
+            android:title="@string/auto_checking_interval"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            app:iconSpaceReserved="false" />
+
+        <EditTextPreference
             android:defaultValue="@string/default_enter_server_url"
             android:key="enter_server_url"
             android:selectAllOnFocus="true"
