@@ -7,6 +7,7 @@ import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
+import com.kangdroid.notification.dialog.IntervalWarningDialog
 import com.kangdroid.notification.exception.PreferenceNullException
 import com.kangdroid.notification.server.ServerManagement
 import com.kangdroid.notification.viewmodel.SharedViewModel
@@ -117,11 +118,11 @@ class AdvancedServerSettings : PreferenceFragmentCompat(), Preference.OnPreferen
             mSharedViewModel.KEY_SERVER_AUTOCHECKING_INTR -> {
                 when (val mInputRequest: Long = (newValue as String).toLong()) {
                     in Long.MIN_VALUE until 1000 -> {
-                        // TODO: Show dialog that below 1000ms would cause significant battery drain.
+                        IntervalWarningDialog(true).show(childFragmentManager, "show")
                         return false
                     }
                     in 50000..Long.MAX_VALUE -> {
-                        // TODO: Show Dialog that more than 50000ms is too-slow.
+                        IntervalWarningDialog(false).show(childFragmentManager, "show")
                         return false
                     }
                     in 1000 until 50000 -> {

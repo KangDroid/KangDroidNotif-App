@@ -39,4 +39,9 @@
     <string name="enable_auto_checking">Enable Auto Checking</string>
     <string name="enable_auto_checking_summary">Server availability check support</string>
     <string name="auto_checking_interval">Auto Checking Interval</string>
+
+    <!-- Auto Server Checking Dialog -->
+    <string name="dialog_ok">OK</string>
+    <string name="time_less_warning">Warning: Setting less than 1000ms is not supported due to battery drain.</string>
+    <string name="time_too_much_warning">Warning: Setting more than 50000ms is not supported due to inefficiency.</string>
 </resources>
