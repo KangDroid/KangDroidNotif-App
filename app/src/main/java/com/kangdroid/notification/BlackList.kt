@@ -11,10 +11,7 @@ import android.os.AsyncTask
 import android.util.Log
 import androidx.preference.*
 import com.kangdroid.notification.settings.Settings
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 class BlackList: PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener {
     var mSwitchMap: HashMap<SwitchPreference, String> = HashMap()
@@ -22,6 +19,9 @@ class BlackList: PreferenceFragmentCompat(), Preference.OnPreferenceChangeListen
     private lateinit var mScreen: PreferenceScreen
     private lateinit var mSharedPreference: SharedPreferences
     private lateinit var mThisWrapper: BlackList
+
+    // Coroutine Scope
+    private val mCoroutineScope: CoroutineScope = CoroutineScope(Job() + Dispatchers.IO)
 
     @SuppressLint("WrongConstant")
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -38,7 +38,7 @@ class BlackList: PreferenceFragmentCompat(), Preference.OnPreferenceChangeListen
         mProgressDialog.show()
 
         // EX doExcute()
-        GlobalScope.launch(Dispatchers.Default) {
+        mCoroutineScope.launch {
             val mPackageManager = activity?.packageManager
             val mPackages: List<PackageInfo> = mPackageManager?.getInstalledPackages(PackageManager.MATCH_ALL)!!
             for (i in mPackages.indices) {

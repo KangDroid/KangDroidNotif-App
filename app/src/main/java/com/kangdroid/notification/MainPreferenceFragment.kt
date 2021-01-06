@@ -27,6 +27,9 @@ class MainPreferenceFragment : PreferenceFragmentCompat(), Preference.OnPreferen
     // View Model
     private val mSharedViewModel: SharedViewModel by activityViewModels()
 
+    // Coroutine Scope
+    private val mCoroutineScope: CoroutineScope = CoroutineScope(Job() + Dispatchers.IO)
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.main_preference, rootKey)
 
@@ -39,7 +42,7 @@ class MainPreferenceFragment : PreferenceFragmentCompat(), Preference.OnPreferen
         mServerStatus.title = getString(R.string.server_off)
 
         // Check for Server availability
-        GlobalScope.launch(Dispatchers.IO) {
+        mCoroutineScope.launch {
             val mSucceed = ServerManagement.checkServerAlive()
 
             withContext(Dispatchers.Main) {
@@ -75,7 +78,7 @@ class MainPreferenceFragment : PreferenceFragmentCompat(), Preference.OnPreferen
         super.onResume()
         // Server Status monitor
         if (mSharedViewModel.mAutoCheckingEnabled) {
-            mServerMonitor = GlobalScope.launch(Dispatchers.IO) {
+            mServerMonitor = mCoroutineScope.launch {
                 while (true) {
                     val mSucceed = ServerManagement.checkServerAlive()
 

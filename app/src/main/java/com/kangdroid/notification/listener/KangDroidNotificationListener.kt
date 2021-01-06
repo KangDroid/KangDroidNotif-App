@@ -8,9 +8,7 @@ import com.kangdroid.notification.dto.NotificationData
 import com.kangdroid.notification.server.CallAPI
 import com.kangdroid.notification.server.ServerManagement
 import com.kangdroid.notification.settings.Settings
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -22,6 +20,8 @@ import java.util.*
 import kotlin.collections.HashMap
 
 class KangDroidNotificationListener : NotificationListenerService() {
+    // Coroutine Scope
+    private val mCoroutineScope: CoroutineScope = CoroutineScope(Job() + Dispatchers.IO)
     val TAG_VAL: String = "RELKangDroidNotificationListener"
 
     override fun onNotificationRemoved(sbn: StatusBarNotification?) {
@@ -57,7 +57,7 @@ class KangDroidNotificationListener : NotificationListenerService() {
         Log.d(TAG_VAL, "Notification Text: ${sbn.notification?.extras?.getString("android.text")}")
 
         // Call post
-        GlobalScope.launch(Dispatchers.IO) {
+        mCoroutineScope.launch {
             val isSucceed: Boolean = ServerManagement.call_post_retro("${sbn.notification?.extras?.getString("android.title")}", "${sbn.notification?.extras?.getString("android.text")}", sbn.packageName)
             if (!isSucceed) {
                 Log.e(TAG_VAL, "Failed to Update DB")

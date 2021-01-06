@@ -11,10 +11,7 @@ import com.kangdroid.notification.dialog.IntervalWarningDialog
 import com.kangdroid.notification.exception.PreferenceNullException
 import com.kangdroid.notification.server.ServerManagement
 import com.kangdroid.notification.viewmodel.SharedViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 class AdvancedServerSettings : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener {
     // UI Constants
@@ -32,6 +29,9 @@ class AdvancedServerSettings : PreferenceFragmentCompat(), Preference.OnPreferen
     // View Model
     private val mSharedViewModel: SharedViewModel by activityViewModels()
 
+    // Coroutine Scope
+    private val mCoroutineScope: CoroutineScope = CoroutineScope(Job() + Dispatchers.IO)
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.advanced_server_preference, rootKey)
 
@@ -39,7 +39,7 @@ class AdvancedServerSettings : PreferenceFragmentCompat(), Preference.OnPreferen
         mCheckServerManual =
             findPreference(KEY_SERVER_RELOAD) as? Preference ?: throw PreferenceNullException()
         mCheckServerManual.setOnPreferenceClickListener {
-            GlobalScope.launch(Dispatchers.IO) {
+            mCoroutineScope.launch {
                 val mSucceed = ServerManagement.checkServerAlive()
 
                 withContext(Dispatchers.Main) {
@@ -85,7 +85,7 @@ class AdvancedServerSettings : PreferenceFragmentCompat(), Preference.OnPreferen
             // URL Edit Update
             KEY_SERVER_URLEDIT -> {
                 ServerManagement.mServerBaseUrl = newValue as String
-                GlobalScope.launch(Dispatchers.IO) {
+                mCoroutineScope.launch {
                     val mSucceed = ServerManagement.checkServerAlive()
 
                     withContext(Dispatchers.Main) {
@@ -98,7 +98,7 @@ class AdvancedServerSettings : PreferenceFragmentCompat(), Preference.OnPreferen
             // Port Edit Update
             KEY_SERVER_PORTEDIT -> {
                 ServerManagement.mServerPort = newValue as String
-                GlobalScope.launch(Dispatchers.IO) {
+                mCoroutineScope.launch {
                     val mSucceed = ServerManagement.checkServerAlive()
 
                     withContext(Dispatchers.Main) {
