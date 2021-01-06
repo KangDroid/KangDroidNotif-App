@@ -74,6 +74,7 @@ class AdvancedServerSettings : PreferenceFragmentCompat(), Preference.OnPreferen
             editText.inputType = InputType.TYPE_CLASS_NUMBER
         }
         mServerAutoInterval.summary = (mSharedViewModel.mAutoCheckingInterval).toString()
+        mServerAutoInterval.isEnabled = mSharedViewModel.mAutoCheckingEnabled
         mServerAutoInterval.onPreferenceChangeListener = this
 
     }
@@ -109,6 +110,7 @@ class AdvancedServerSettings : PreferenceFragmentCompat(), Preference.OnPreferen
             // Server Auto-checking Update
             mSharedViewModel.KEY_SERVER_AUTOCHECKING -> {
                 mSharedViewModel.mAutoCheckingEnabled = newValue as Boolean
+                mServerAutoInterval.isEnabled = mSharedViewModel.mAutoCheckingEnabled
             }
 
             // Server Auto-Checking Interval
