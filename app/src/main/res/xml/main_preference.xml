@@ -4,29 +4,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory android:title="@string/server_management_title"
         app:iconSpaceReserved="false">
-
-        <Preference
-            android:key="advanced_server_settings"
-            android:title="@string/advanced_server_category"
-            android:fragment="com.kangdroid.notification.AdvancedServerSettings"
-            app:iconSpaceReserved="false" />
-
-        <EditTextPreference
-            android:defaultValue="@string/default_enter_server_url"
-            android:key="enter_server_url"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:title="@string/server_url_title"
-            app:iconSpaceReserved="false"/>
-
-        <EditTextPreference
-            android:defaultValue="@string/default_enter_server_port"
-            android:key="enter_server_port"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:title="@string/server_port_title"
-            app:iconSpaceReserved="false"/>
-
         <Preference
             android:key="server_status"
             android:selectable="true"
@@ -34,11 +11,10 @@
             app:iconSpaceReserved="false"/>
 
         <Preference
-            android:key="server_reload"
-            android:selectable="true"
-            android:title="@string/manual_server_reload"
+            android:key="advanced_server_settings"
+            android:title="@string/advanced_server_category"
+            android:fragment="com.kangdroid.notification.AdvancedServerSettings"
             app:iconSpaceReserved="false" />
-
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/notification_manage_title"
         app:iconSpaceReserved="false">

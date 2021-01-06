@@ -5,5 +5,26 @@
     <PreferenceCategory
         android:title="@string/advanced_server_category"
         app:iconSpaceReserved="false">
+        <EditTextPreference
+            android:defaultValue="@string/default_enter_server_url"
+            android:key="enter_server_url"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/server_url_title"
+            app:iconSpaceReserved="false"/>
+
+        <EditTextPreference
+            android:defaultValue="@string/default_enter_server_port"
+            android:key="enter_server_port"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/server_port_title"
+            app:iconSpaceReserved="false"/>
+
+        <Preference
+            android:key="server_reload"
+            android:selectable="true"
+            android:title="@string/manual_server_reload"
+            app:iconSpaceReserved="false" />
     </PreferenceCategory>
 </PreferenceScreen>

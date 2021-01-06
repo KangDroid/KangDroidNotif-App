@@ -1,29 +1,28 @@
 package com.kangdroid.notification
 
 import android.os.Bundle
+import androidx.fragment.app.activityViewModels
 import androidx.preference.*
 import com.kangdroid.notification.exception.PreferenceNullException
 import com.kangdroid.notification.server.ServerManagement
 import com.kangdroid.notification.settings.Settings
+import com.kangdroid.notification.viewmodel.SharedViewModel
 import kotlinx.coroutines.*
 
 class MainPreferenceFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener {
     // UI Constants
     private val KEY_SERVER_STATUS: String = "server_status"
     private val KEY_DISABLE_CHARGING: String = "disable_charging_state"
-    private val KEY_SERVER_RELOAD: String = "server_reload"
-    private val KEY_SERVER_URLEDIT: String = "enter_server_url"
-    private val KEY_SERVER_PORTEDIT: String = "enter_server_port"
 
     // UI Variable
     private lateinit var mServerStatus: Preference
     private lateinit var mDisableCharging: SwitchPreference
-    private lateinit var mCheckServerManual: Preference
-    private lateinit var mServerURLEditor: EditTextPreference
-    private lateinit var mServerPortEditor: EditTextPreference
 
     // Server Monitoring
     private lateinit var mServerMonitor: Job
+
+    // View Model
+    private val mSharedViewModel: SharedViewModel by activityViewModels()
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.main_preference, rootKey)
@@ -42,6 +41,7 @@ class MainPreferenceFragment : PreferenceFragmentCompat(), Preference.OnPreferen
 
             withContext(Dispatchers.Main) {
                 updateServerStatusUI(mSucceed)
+                mSharedViewModel.mServerOn = mSucceed
             }
         }
 
@@ -52,31 +52,6 @@ class MainPreferenceFragment : PreferenceFragmentCompat(), Preference.OnPreferen
             mSharedPreference.getBoolean(KEY_DISABLE_CHARGING, false)
         mDisableCharging.onPreferenceChangeListener = this
 
-        // Manual Server Refresh
-        mCheckServerManual =
-            findPreference(KEY_SERVER_RELOAD) as? Preference ?: throw PreferenceNullException()
-        mCheckServerManual.setOnPreferenceClickListener {
-            GlobalScope.launch(Dispatchers.IO) {
-                val mSucceed = ServerManagement.checkServerAlive()
-
-                withContext(Dispatchers.Main) {
-                    updateServerStatusUI(mSucceed)
-                }
-            }
-            true
-        }
-
-        // Server URL
-        mServerURLEditor = findPreference(KEY_SERVER_URLEDIT) as? EditTextPreference
-            ?: throw PreferenceNullException()
-        mServerURLEditor.text = ServerManagement.mServerBaseUrl
-        mServerURLEditor.onPreferenceChangeListener = this
-
-        // Server Port
-        mServerPortEditor = findPreference(KEY_SERVER_PORTEDIT) as? EditTextPreference
-            ?: throw PreferenceNullException()
-        mServerPortEditor.text = ServerManagement.mServerPort
-        mServerPortEditor.onPreferenceChangeListener = this
     }
 
     override fun onPause() {
@@ -86,6 +61,7 @@ class MainPreferenceFragment : PreferenceFragmentCompat(), Preference.OnPreferen
 
     override fun onResume() {
         super.onResume()
+        updateServerStatusUI(mSharedViewModel.mServerOn)
         // Server Status monitor
         mServerMonitor = GlobalScope.launch(Dispatchers.IO) {
             while (true) {
@@ -93,6 +69,7 @@ class MainPreferenceFragment : PreferenceFragmentCompat(), Preference.OnPreferen
 
                 withContext(Dispatchers.Main) {
                     updateServerStatusUI(mSucceed)
+                    mSharedViewModel.mServerOn = mSucceed
                 }
                 delay(2000)
             }
@@ -101,30 +78,6 @@ class MainPreferenceFragment : PreferenceFragmentCompat(), Preference.OnPreferen
 
     override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
         when (preference?.key) {
-            // URL Edit Update
-            KEY_SERVER_URLEDIT -> {
-                ServerManagement.mServerBaseUrl = newValue as String
-                GlobalScope.launch(Dispatchers.IO) {
-                    val mSucceed = ServerManagement.checkServerAlive()
-
-                    withContext(Dispatchers.Main) {
-                        updateServerStatusUI(mSucceed)
-                    }
-                }
-            }
-
-            // Port Edit Update
-            KEY_SERVER_PORTEDIT -> {
-                ServerManagement.mServerPort = newValue as String
-                GlobalScope.launch(Dispatchers.IO) {
-                    val mSucceed = ServerManagement.checkServerAlive()
-
-                    withContext(Dispatchers.Main) {
-                        updateServerStatusUI(mSucceed)
-                    }
-                }
-            }
-
             // Charging Notification Update
             KEY_DISABLE_CHARGING -> {
                 Settings.mDisableChargingNotification = newValue as Boolean
@@ -134,27 +87,11 @@ class MainPreferenceFragment : PreferenceFragmentCompat(), Preference.OnPreferen
     }
 
     fun updateServerStatusUI(mServerRetStatus: Boolean) {
-        val mErrorString = getString(R.string.server_connection_error)
-
         if (mServerRetStatus) {
-            // Server URL Editor
-            mServerURLEditor.text = ServerManagement.mServerBaseUrl
-            mServerURLEditor.summary = ServerManagement.mServerBaseUrl
-
-            // Server Port Editor
-            mServerPortEditor.text = ServerManagement.mServerPort
-            mServerPortEditor.summary = ServerManagement.mServerPort
-
             // Overall Server Connection State
             mServerStatus.title = getString(R.string.server_on)
 
         } else {
-            // Server URL Editor
-            mServerURLEditor.summary = mErrorString
-
-            // Server Port Editor
-            mServerPortEditor.summary = mErrorString
-
             // Overall Server Connection State
             mServerStatus.title = getString(R.string.server_off)
         }
