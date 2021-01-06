@@ -65,7 +65,6 @@ class MainPreferenceFragment : PreferenceFragmentCompat(), Preference.OnPreferen
 
     override fun onResume() {
         super.onResume()
-        updateServerStatusUI(mSharedViewModel.mServerOn)
         // Server Status monitor
         if (mSharedViewModel.mAutoCheckingEnabled) {
             mServerMonitor = GlobalScope.launch(Dispatchers.IO) {
@@ -79,6 +78,8 @@ class MainPreferenceFragment : PreferenceFragmentCompat(), Preference.OnPreferen
                     delay(2000)
                 }
             }
+        } else {
+            updateServerStatusUI(mSharedViewModel.mServerOn)
         }
     }
 
