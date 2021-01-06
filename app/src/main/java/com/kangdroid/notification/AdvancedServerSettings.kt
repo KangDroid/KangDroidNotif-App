@@ -2,9 +2,7 @@ package com.kangdroid.notification
 
 import android.os.Bundle
 import androidx.fragment.app.activityViewModels
-import androidx.preference.EditTextPreference
-import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.*
 import com.kangdroid.notification.exception.PreferenceNullException
 import com.kangdroid.notification.server.ServerManagement
 import com.kangdroid.notification.viewmodel.SharedViewModel
@@ -13,7 +11,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class AdvancedServerSettings: PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener {
+class AdvancedServerSettings : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener {
     // UI Constants
     private val KEY_SERVER_RELOAD: String = "server_reload"
     private val KEY_SERVER_URLEDIT: String = "enter_server_url"
@@ -23,12 +21,16 @@ class AdvancedServerSettings: PreferenceFragmentCompat(), Preference.OnPreferenc
     private lateinit var mCheckServerManual: Preference
     private lateinit var mServerURLEditor: EditTextPreference
     private lateinit var mServerPortEditor: EditTextPreference
+    private lateinit var mServerAutoChecking: SwitchPreference
 
     // View Model
     private val mSharedViewModel: SharedViewModel by activityViewModels()
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.advanced_server_preference, rootKey)
+
+        // Shared Preference for getting values
+        val mSharedPreference = PreferenceManager.getDefaultSharedPreferences(activity)
 
         // Manual Server Refresh
         mCheckServerManual =
@@ -55,6 +57,11 @@ class AdvancedServerSettings: PreferenceFragmentCompat(), Preference.OnPreferenc
             ?: throw PreferenceNullException()
         mServerPortEditor.text = ServerManagement.mServerPort
         mServerPortEditor.onPreferenceChangeListener = this
+
+        // Server Auto Checking Switch
+        mServerAutoChecking = findPreference(mSharedViewModel.KEY_SERVER_AUTOCHECKING) as? SwitchPreference
+            ?: throw PreferenceNullException()
+        mServerAutoChecking.onPreferenceChangeListener = this
 
     }
 
@@ -84,6 +91,11 @@ class AdvancedServerSettings: PreferenceFragmentCompat(), Preference.OnPreferenc
                         mSharedViewModel.mServerOn = mSucceed
                     }
                 }
+            }
+
+            // Server Auto-checking Update
+            mSharedViewModel.KEY_SERVER_AUTOCHECKING -> {
+                mSharedViewModel.mAutoCheckingEnabled = newValue as Boolean
             }
         }
         return true

@@ -5,6 +5,14 @@
     <PreferenceCategory
         android:title="@string/advanced_server_category"
         app:iconSpaceReserved="false">
+
+        <SwitchPreference
+            android:key="enable_auto_checking"
+            android:title="@string/enable_auto_checking"
+            android:summary="@string/enable_auto_checking_summary"
+            android:defaultValue="false"
+            app:iconSpaceReserved="false" />
+
         <EditTextPreference
             android:defaultValue="@string/default_enter_server_url"
             android:key="enter_server_url"

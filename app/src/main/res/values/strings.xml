@@ -34,4 +34,8 @@
 
     <!-- Advanced Server Settings -->
     <string name="advanced_server_category">Advanced Server Settings</string>
+
+    <!-- Advanced: Auto server checking -->
+    <string name="enable_auto_checking">Enable Auto Checking</string>
+    <string name="enable_auto_checking_summary">Server availability check support</string>
 </resources>

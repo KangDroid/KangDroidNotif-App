@@ -52,26 +52,32 @@ class MainPreferenceFragment : PreferenceFragmentCompat(), Preference.OnPreferen
             mSharedPreference.getBoolean(KEY_DISABLE_CHARGING, false)
         mDisableCharging.onPreferenceChangeListener = this
 
+        // Do we need to update?
+        mSharedViewModel.mAutoCheckingEnabled = mSharedPreference.getBoolean(mSharedViewModel.KEY_SERVER_AUTOCHECKING, false)
     }
 
     override fun onPause() {
         super.onPause()
-        mServerMonitor.cancel()
+        if (mSharedViewModel.mAutoCheckingEnabled) {
+            mServerMonitor.cancel()
+        }
     }
 
     override fun onResume() {
         super.onResume()
         updateServerStatusUI(mSharedViewModel.mServerOn)
         // Server Status monitor
-        mServerMonitor = GlobalScope.launch(Dispatchers.IO) {
-            while (true) {
-                val mSucceed = ServerManagement.checkServerAlive()
+        if (mSharedViewModel.mAutoCheckingEnabled) {
+            mServerMonitor = GlobalScope.launch(Dispatchers.IO) {
+                while (true) {
+                    val mSucceed = ServerManagement.checkServerAlive()
 
-                withContext(Dispatchers.Main) {
-                    updateServerStatusUI(mSucceed)
-                    mSharedViewModel.mServerOn = mSucceed
+                    withContext(Dispatchers.Main) {
+                        updateServerStatusUI(mSucceed)
+                        mSharedViewModel.mServerOn = mSucceed
+                    }
+                    delay(2000)
                 }
-                delay(2000)
             }
         }
     }
