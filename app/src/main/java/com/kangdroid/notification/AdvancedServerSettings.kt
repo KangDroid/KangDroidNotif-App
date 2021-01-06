@@ -29,9 +29,6 @@ class AdvancedServerSettings : PreferenceFragmentCompat(), Preference.OnPreferen
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.advanced_server_preference, rootKey)
 
-        // Shared Preference for getting values
-        val mSharedPreference = PreferenceManager.getDefaultSharedPreferences(activity)
-
         // Manual Server Refresh
         mCheckServerManual =
             findPreference(KEY_SERVER_RELOAD) as? Preference ?: throw PreferenceNullException()
