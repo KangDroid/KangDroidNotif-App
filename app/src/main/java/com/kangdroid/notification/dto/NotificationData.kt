@@ -4,5 +4,4 @@ data class NotificationData(
     var reqPackage: String,
     var title: String,
     var content: String,
-    var genDate: String
 )

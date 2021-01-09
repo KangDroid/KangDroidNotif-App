@@ -55,12 +55,6 @@ class ServerManagement {
             return mResponse?.isSuccessful ?: false
         }
 
-        fun getCurDateInFormat(): String {
-            val todayDate: Date = Calendar.getInstance().time
-            val formatDate: DateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
-            return formatDate.format(todayDate)
-        }
-
         /**
          * POST Method
          */
@@ -82,7 +76,6 @@ class ServerManagement {
                 put("reqPackage", reqPackage)
                 put("title", title)
                 put("content", content)
-                put("genDate", getCurDateInFormat())
             }
 
             val mPostValue = mApi.postTestValue(inputParam)
